@@ -13,6 +13,8 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("net.dv8tion:JDA:$jdaVersion")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+    implementation("it.skrape:skrapeit:1.2.2")
 }
 
 kotlin {
