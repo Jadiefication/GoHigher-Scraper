@@ -9,6 +9,11 @@ import it.skrape.selects.html5.a
 import it.skrape.selects.html5.div
 import it.skrape.selects.html5.span
 import net.dv8tion.jda.api.JDABuilder
+import net.dv8tion.jda.api.interactions.InteractionContextType
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.Commands
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import java.util.EnumSet
@@ -34,7 +39,10 @@ val jda = JDABuilder.create(token,
         GatewayIntent.MESSAGE_CONTENT,
         GatewayIntent.DIRECT_MESSAGES
     )
-).build()
+)
+    .addEventListeners(ChannelCommand)
+    .build()
+var id = 1461838274615050261
 
 val command = {
     val scrapedEvents = skrape(HttpFetcher) {
@@ -77,7 +85,7 @@ val command = {
         }
     }
 
-    val channel = jda.getForumChannelById(1461838274615050261)
+    val channel = jda.getForumChannelById(id)
     val filteredEvents = scrapedEvents.filter { event ->
         event.fields.any { field -> interestingFields.contains(field) }
     }
@@ -94,7 +102,13 @@ val command = {
 }
 
 fun main() {
-    command()
+    val commands = jda.updateCommands()
+    commands.addCommands(Commands.slash("channel", "Set the forms channel of the bot")
+        .addOptions(OptionData(OptionType.CHANNEL, "channel", "The channel the bot will write to", true))
+        .setContexts(InteractionContextType.GUILD)
+        .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
+    )
+    commands.queue()
     scheduler.scheduleAtFixedRate(command, 0,
         7,
         TimeUnit.DAYS)
