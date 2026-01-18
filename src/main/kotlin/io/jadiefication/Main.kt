@@ -42,7 +42,7 @@ val jda = JDABuilder.create(token,
 )
     .addEventListeners(ChannelCommand)
     .build()
-var id = 1461838274615050261
+var id = 1459867679744721011
 
 val command = {
     val scrapedEvents = skrape(HttpFetcher) {
@@ -89,6 +89,7 @@ val command = {
     val filteredEvents = scrapedEvents.filter { event ->
         event.fields.any { field -> interestingFields.contains(field) }
     }
+    val tag = channel?.availableTags?.random()
     filteredEvents.forEach {
         if (channel?.threadChannels?.any { post -> post.name == it.name } != true) {
             channel?.createForumPost(
@@ -96,7 +97,7 @@ val command = {
                 .apply {
                     setContent(it.toString())
                 }
-                .build())?.queue()
+                .build())?.setTags(tag)?.queue()
         }
     }
 }
@@ -106,7 +107,6 @@ fun main() {
     commands.addCommands(Commands.slash("channel", "Set the forms channel of the bot")
         .addOptions(OptionData(OptionType.CHANNEL, "channel", "The channel the bot will write to", true))
         .setContexts(InteractionContextType.GUILD)
-        .setDefaultPermissions(DefaultMemberPermissions.DISABLED)
     )
     commands.queue()
     scheduler.scheduleAtFixedRate(command, 0,

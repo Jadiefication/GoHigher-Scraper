@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.2.21"
+    application
 }
 
 group = "io.void"
@@ -23,4 +24,9 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+application {
+    // Kotlin file with top-level main has class name MainKt under its package
+    mainClass.set("io.jadiefication.MainKt")
 }
